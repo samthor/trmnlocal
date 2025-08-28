@@ -11,6 +11,12 @@ See [a demo](https://bsky.app/profile/samthor.au/post/3lxgh2wwjn22v).
 ## Usage
 
 Install this package via `npm` or friends, and run `trmnlocal` (possibly from your global path).
+For instance:
+
+```bash
+$ npm install -g trmnlocal
+$ trmnlocal -u https://samthor.au/trmnlocal
+```
 
 This will run a server that you can point your TRMNL device to, in the Advanced setup.
 Use your machine's IP address and the port (e.g., "http://192.168.0.141:8080").

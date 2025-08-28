@@ -1,6 +1,6 @@
 {
   "name": "trmnlocal",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "devDependencies": {
     "@types/node": "^24.3.0",
     "esbuild": "^0.25.9",
@@ -12,7 +12,7 @@
   },
   "type": "module",
   "scripts": {
-    "build": "esbuild --bundle --format=esm --platform=node --external:puppeteer --outfile=dist/bin.js src/index.ts",
+    "build": "esbuild --bundle --format=esm --platform=node --external:puppeteer --outfile=dist/bin.js --banner:js=\"#!/usr/bin/env node\" src/index.ts",
     "prepublishOnly": "node --run build",
     "start": "node src/index.ts"
   },
