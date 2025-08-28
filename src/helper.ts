@@ -75,12 +75,18 @@ export async function internalRender(arg: RenderArg) {
 
   // run, take screenshot, get png
   const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  page.setViewport({ ...renderSize, deviceScaleFactor: 1 });
-  await page.goto(arg.url.toString());
-  await timeout(1000); // wait for page to settle
+  let out: Uint8Array;
+  try {
+    const page = await browser.newPage();
+    page.setViewport({ ...renderSize, deviceScaleFactor: 1 });
+    await page.goto(arg.url.toString());
+    await timeout(1000); // wait for page to settle
 
-  const out = await page.screenshot();
+    out = await page.screenshot();
+  } finally {
+    // TODO: reuse browser instance
+    await browser.close();
+  }
   const raw = png.decode(out);
 
   // validate expectations
