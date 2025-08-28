@@ -1,6 +1,7 @@
 # trmnlocal
 
 Local Node.JS host that can be used as a [TRMNL API server](https://docs.usetrmnl.com/go/diy/byos).
+Tested on macOS and Ubuntu.
 
 Renders a webpage of your choice via Puppeteer, by default every ~20 seconds (but can be made faster/slower).
 Passes some state in the URL: device ID, `rssi`, etc.
@@ -23,6 +24,20 @@ Use your machine's IP address and the port (e.g., "http://192.168.0.141:8080").
 
 You might want to run this in a more long-term way somewhere.
 Up to you!
+
+### On Ubuntu/Linux
+
+To run this on a headless Ubuntu/Linux environment, I needed these additional packages:
+
+```bash
+sudo apt install libxdamage1 libxcomposite-dev libatk-bridge2.0-0
+```
+
+But also, don't run random commands as `sudo` from randoms on the internet.
+
+### Demo
+
+You can load "/render" (e.g., "http://localhost:8080/render") to render the 2-bit PNG just for local testing.
 
 ### Flags
 
