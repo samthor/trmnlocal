@@ -1,4 +1,6 @@
 import type * as http from 'node:http';
+import puppeteer from 'puppeteer';
+import * as png from 'fast-png';
 
 export const log = (...rest: any[]) => console.info(new Date().toISOString(), ...rest);
 
@@ -31,3 +33,49 @@ export const getHeader = (
   }
   return o ?? defaultValue;
 };
+
+export type RenderArg = {
+  url: string | URL;
+  width: number;
+  height: number;
+};
+
+export async function internalRender(arg: RenderArg) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  page.setViewport({ width: arg.width, height: arg.height, deviceScaleFactor: 1 });
+  await page.goto(arg.url.toString());
+
+  const out = await page.screenshot();
+  const raw = png.decode(out);
+
+  if (raw.channels !== 3 || raw.depth !== 8) {
+    throw new Error(`expected channels=3 (was ${raw.channels}), depth=8 (was ${raw.depth})`);
+  }
+
+  const grayscale = new Uint8Array(raw.data.length / 12); // 3 channels @ 8bit => 1 channel @ 2bit
+  const pixels = raw.data.length / 3;
+
+  for (let i = 0; i < pixels; ++i) {
+    const source = raw.data.subarray(i * 3, i * 3 + 3); // 3 bytes
+
+    const gray = Math.floor(0.229 * source[0] + 0.587 * source[1] + 0.114 * source[2]);
+    const average2 = Math.floor(gray / 64);
+    if (average2 < 0 || average2 > 3) {
+      throw new Error(`bad average=${average2} gray=${gray}`);
+    }
+
+    const destIndex = i >> 2;
+    const destShift = (3 - (i & 3)) * 2; // place on wrong side of byte
+
+    grayscale[destIndex] |= average2 << destShift;
+  }
+
+  return png.encode({
+    data: grayscale,
+    width: arg.width,
+    height: arg.height,
+    channels: 1,
+    depth: 2,
+  });
+}
