@@ -3,6 +3,8 @@ import * as http from 'node:http';
 import { buildTrmnlApi, matchUrl } from './trmnl.ts';
 import { readableToJson } from 'thorish';
 import { hash } from 'node:crypto';
+import { TimeoutCache } from './cache.ts';
+import { IMAGE_CACHE_SECONDS } from './const.ts';
 
 export type ServerArg = {
   url: string;
@@ -11,7 +13,7 @@ export type ServerArg = {
 };
 
 export function createServer(serverArg: ServerArg) {
-  const imageCache = new Map<string, Uint8Array>();
+  const imageCache = new TimeoutCache<string, Uint8Array>();
 
   const render = async (arg: RenderArg) => {
     log(`rendering`, arg.url.toString(), 'at', {
@@ -25,8 +27,8 @@ export function createServer(serverArg: ServerArg) {
     const duration = performance.now() - start;
     log(`done`, arg.url.toString(), `- ${bytes.length}b, ${duration.toFixed(2)}ms`);
 
-    const h = hash('sha256', bytes); // TODO: shorter hash?
-    imageCache.set(h, bytes); // FIXME: expire cache!
+    const h = hash('md5', bytes, 'base64url');
+    imageCache.set(h, bytes, IMAGE_CACHE_SECONDS * 1000);
     return h;
   };
 
@@ -88,7 +90,6 @@ export function createServer(serverArg: ServerArg) {
       const params = u.searchParams;
       const width = +(params.get('w') || 800);
       const height = +(params.get('h') || 480);
-
       const rotate = +(params.get('r') || serverArg.rotate || 0) as RotateOption;
 
       const id = await render({ url: serverArg.url, width, height, rotate });

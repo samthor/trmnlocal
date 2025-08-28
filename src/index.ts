@@ -1,8 +1,7 @@
+import { REFRESH_SAFE_SECONDS } from './const.ts';
 import { log, type RotateOption } from './helper.ts';
 import { createServer } from './server.ts';
 import { parseArgs } from 'node:util';
-
-const REFRESH_SAFE_SECONDS = 10;
 
 const { values } = parseArgs({
   args: process.argv.slice(2),

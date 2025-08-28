@@ -5,6 +5,9 @@ import { timeout } from 'thorish';
 
 export const log = (...rest: any[]) => console.info(new Date().toISOString(), ...rest);
 
+/**
+ * Writes bytes to the {@link http.ServerResponse}.
+ */
 export const write = async (
   res: http.ServerResponse,
   bytes: Uint8Array | string,
@@ -22,10 +25,13 @@ export const write = async (
   });
 };
 
+/**
+ * Retrieves the single header, or returns the default value (blank if unspecified).
+ */
 export const getHeader = (
   header: http.IncomingHttpHeaders,
   name: string,
-  defaultValue: string,
+  defaultValue: string = '',
 ): string => {
   const o = header[name.toLowerCase()];
 
@@ -86,10 +92,11 @@ export async function internalRender(arg: RenderArg) {
   for (let i = 0; i < pixels; ++i) {
     const source = raw.data.subarray(i * 3, i * 3 + 3); // 3 bytes
 
+    // this formula is literally from Google's AI overview :melt:
     const gray = Math.floor(0.229 * source[0] + 0.587 * source[1] + 0.114 * source[2]);
     const average2 = Math.floor(gray / 64);
     if (average2 < 0 || average2 > 3) {
-      throw new Error(`bad average=${average2} gray=${gray}`);
+      throw new Error(`bad average=${average2} gray=${gray}`); // sanity check
     }
 
     const x = i % renderSize.width;

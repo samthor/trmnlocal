@@ -30,7 +30,7 @@ export function buildTrmnlApi(buildArg: BuildArg): (arg: TrmnlArg) => Promise<an
     const pageUrl = new URL(buildArg.url);
     const toCopy = ['id', 'rssi', 'battery-voltage', 'fw-version', 'model'];
     for (const header of toCopy) {
-      pageUrl.searchParams.set(header, getHeader(arg.headers, header, ''));
+      pageUrl.searchParams.set(header, getHeader(arg.headers, header));
     }
 
     const width = +getHeader(arg.headers, 'width', '800');
