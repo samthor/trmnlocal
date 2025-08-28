@@ -18,6 +18,5 @@
   "bin": {
     "trmnlocal": "./dist/bin.js"
   },
-  "private": true,
   "license": "Apache-2.0"
 }

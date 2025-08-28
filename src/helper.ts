@@ -1,6 +1,7 @@
 import type * as http from 'node:http';
 import puppeteer from 'puppeteer';
 import * as png from 'fast-png';
+import { timeout } from 'thorish';
 
 export const log = (...rest: any[]) => console.info(new Date().toISOString(), ...rest);
 
@@ -70,6 +71,8 @@ export async function internalRender(arg: RenderArg) {
   const page = await browser.newPage();
   page.setViewport({ ...renderSize, deviceScaleFactor: 1 });
   await page.goto(arg.url.toString());
+  await timeout(1000); // wait for page to settle
+
   const out = await page.screenshot();
   const raw = png.decode(out);
 
