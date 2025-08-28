@@ -12,7 +12,8 @@
   "type": "module",
   "scripts": {
     "build": "esbuild --bundle --format=esm --platform=node --external:puppeteer --outfile=dist/trmnlocal.js src/index.ts",
-    "prepublishOnly": "node --run build"
+    "prepublishOnly": "node --run build",
+    "start": "node src/index.ts"
   },
   "bin": {
     "trmnlocal": "./dist/bin.js"

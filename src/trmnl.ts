@@ -1,5 +1,5 @@
 import type * as http from 'node:http';
-import { getHeader, log, type RenderArg } from './helper.ts';
+import { getHeader, log, type RotateOption, type RenderArg } from './helper.ts';
 
 export type TrmnlArg = {
   method: string;
@@ -18,10 +18,11 @@ export function matchUrl(url: string | undefined): string | undefined {
 }
 
 export type BuildArg = {
-  url: string;
   render: (arg: RenderArg) => Promise<string>;
   imageUrl: (self: string, id: string) => string;
+  url: string;
   refreshRate: number;
+  rotate: RotateOption;
 };
 
 export function buildTrmnlApi(buildArg: BuildArg): (arg: TrmnlArg) => Promise<any> {
@@ -35,7 +36,7 @@ export function buildTrmnlApi(buildArg: BuildArg): (arg: TrmnlArg) => Promise<an
     const width = +getHeader(arg.headers, 'width', '800');
     const height = +getHeader(arg.headers, 'height', '480');
 
-    const id = await buildArg.render({ url: pageUrl, width, height });
+    const id = await buildArg.render({ url: pageUrl, width, height, rotate: buildArg.rotate });
     return id;
   };
 

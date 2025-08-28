@@ -10,11 +10,15 @@ export type ServerArg = {
   rotate: RotateOption;
 };
 
-export function createServer(arg: ServerArg) {
+export function createServer(serverArg: ServerArg) {
   const imageCache = new Map<string, Uint8Array>();
 
   const render = async (arg: RenderArg) => {
-    log(`rendering`, arg.url.toString(), 'at', { width: arg.width, height: arg.height });
+    log(`rendering`, arg.url.toString(), 'at', {
+      width: arg.width,
+      height: arg.height,
+      rotate: arg.rotate,
+    });
     const start = performance.now();
 
     const bytes = await internalRender(arg);
@@ -31,8 +35,7 @@ export function createServer(arg: ServerArg) {
     imageUrl(self, id) {
       return `${self}/image/${id}`;
     },
-    refreshRate: arg.refreshRate,
-    url: arg.url,
+    ...serverArg,
   });
 
   const serverHandler = async (u: URL, req: http.IncomingMessage, res: http.ServerResponse) => {
@@ -86,10 +89,14 @@ export function createServer(arg: ServerArg) {
       const width = +(params.get('w') || 800);
       const height = +(params.get('h') || 480);
 
-      const rotate = +(params.get('r') || 0) as RotateOption;
+      const rotate = +(params.get('r') || serverArg.rotate || 0) as RotateOption;
 
-      const id = await render({ url: arg.url, width, height, rotate });
+      const id = await render({ url: serverArg.url, width, height, rotate });
       const bytes = imageCache.get(id)!;
+
+      // don't cache for testing
+      res.setHeader('Cache-Control', 'no-store');
+
       await write(res, bytes, 'image/png');
       return;
     }
