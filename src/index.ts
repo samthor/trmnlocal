@@ -1,6 +1,6 @@
 import { REFRESH_SAFE_SECONDS } from './const.ts';
 import { log, type RotateOption } from './helper.ts';
-import { createServer } from './server.ts';
+import { createServer, type ServerArg } from './server.ts';
 import { parseArgs } from 'node:util';
 
 const { values } = parseArgs({
@@ -30,6 +30,10 @@ const { values } = parseArgs({
       short: 'p',
       default: process.env.PORT || '8080',
     },
+    '1bit': {
+      type: 'boolean',
+      short: '1',
+    },
   },
 });
 
@@ -40,10 +44,11 @@ if (values.help) {
   process.exit(1);
 }
 
-const arg = {
+const arg: ServerArg = {
   url: values.url,
   refreshRate: Math.max(REFRESH_SAFE_SECONDS, +values.refreshRate),
   rotate: +values.rotate as RotateOption,
+  bits: values['1bit'] ? 1 : 2,
 };
 log('setup with', arg);
 

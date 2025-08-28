@@ -10,6 +10,7 @@ export type ServerArg = {
   url: string;
   refreshRate: number;
   rotate: RotateOption;
+  bits: 1 | 2;
 };
 
 export function createServer(serverArg: ServerArg) {
@@ -20,6 +21,7 @@ export function createServer(serverArg: ServerArg) {
       width: arg.width,
       height: arg.height,
       rotate: arg.rotate,
+      bits: arg.bits,
     });
     const start = performance.now();
 
@@ -91,8 +93,9 @@ export function createServer(serverArg: ServerArg) {
       const width = +(params.get('w') || 800);
       const height = +(params.get('h') || 480);
       const rotate = +(params.get('r') || serverArg.rotate || 0) as RotateOption;
+      const bits = +(params.get('b') || 2) as 1 | 2;
 
-      const id = await render({ url: serverArg.url, width, height, rotate });
+      const id = await render({ url: serverArg.url, width, height, rotate, bits });
       const bytes = imageCache.get(id)!;
 
       // don't cache for testing

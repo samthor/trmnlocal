@@ -47,6 +47,7 @@ export type RenderArg = {
   url: string | URL;
   width: number;
   height: number;
+  bits?: 1 | 2;
   rotate?: RotateOption;
 };
 
@@ -85,6 +86,10 @@ export async function internalRender(arg: RenderArg) {
   // validate expectations
   if (raw.channels !== 3 || raw.depth !== 8) {
     throw new Error(`expected channels=3 (was ${raw.channels}), depth=8 (was ${raw.depth})`);
+  }
+
+  if (arg.bits === 1) {
+    throw new Error(`TODO: actually implement 1bit support`);
   }
 
   const grayscale = new Uint8Array(raw.data.length / 12); // 3 channels @ 8bit => 1 channel @ 2bit

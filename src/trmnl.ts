@@ -23,6 +23,7 @@ export type BuildArg = {
   url: string;
   refreshRate: number;
   rotate: RotateOption;
+  bits: 1 | 2;
 };
 
 export function buildTrmnlApi(buildArg: BuildArg): (arg: TrmnlArg) => Promise<any> {
@@ -36,7 +37,13 @@ export function buildTrmnlApi(buildArg: BuildArg): (arg: TrmnlArg) => Promise<an
     const width = +getHeader(arg.headers, 'width', '800');
     const height = +getHeader(arg.headers, 'height', '480');
 
-    const id = await buildArg.render({ url: pageUrl, width, height, rotate: buildArg.rotate });
+    const id = await buildArg.render({
+      url: pageUrl,
+      width,
+      height,
+      rotate: buildArg.rotate,
+      bits: buildArg.bits,
+    });
     return id;
   };
 
