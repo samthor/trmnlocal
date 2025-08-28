@@ -1,6 +1,6 @@
 {
   "name": "trmnlocal",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "devDependencies": {
     "@types/node": "^24.3.0",
     "esbuild": "^0.25.9",
