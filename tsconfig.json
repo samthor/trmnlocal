@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "noEmit": true,
+
+    // if you'd like to warn if you're using modern features, change these
+    // both to e.g., "es2017"
+    "module": "NodeNext",
+    "target": "ESNext",
+    "moduleResolution": "NodeNext",
+
+    // regular rules (including decorators for lit support)
+    "strict": true,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "allowImportingTsExtensions": true
+  }
+}
