@@ -1,4 +1,4 @@
-import { internalRender, log, write, type RenderArg } from './helper.ts';
+import { internalRender, log, type RotateOption, write, type RenderArg } from './helper.ts';
 import * as http from 'node:http';
 import { buildTrmnlApi, matchUrl } from './trmnl.ts';
 import { readableToJson } from 'thorish';
@@ -7,13 +7,14 @@ import { hash } from 'node:crypto';
 export type ServerArg = {
   url: string;
   refreshRate: number;
+  rotate: RotateOption;
 };
 
 export function createServer(arg: ServerArg) {
   const imageCache = new Map<string, Uint8Array>();
 
   const render = async (arg: RenderArg) => {
-    log(`rendering`, arg.url.toString, 'at', { width: arg.width, height: arg.height });
+    log(`rendering`, arg.url.toString(), 'at', { width: arg.width, height: arg.height });
     const start = performance.now();
 
     const bytes = await internalRender(arg);
@@ -85,7 +86,10 @@ export function createServer(arg: ServerArg) {
       const width = +(params.get('w') || 800);
       const height = +(params.get('h') || 480);
 
-      const bytes = await render({ url: arg.url, width, height });
+      const rotate = +(params.get('r') || 0) as RotateOption;
+
+      const id = await render({ url: arg.url, width, height, rotate });
+      const bytes = imageCache.get(id)!;
       await write(res, bytes, 'image/png');
       return;
     }

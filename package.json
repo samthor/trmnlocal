@@ -1,16 +1,22 @@
 {
+  "name": "trmnlocal",
   "devDependencies": {
-    "@types/node": "^24.3.0"
+    "@types/node": "^24.3.0",
+    "esbuild": "^0.25.9",
+    "fast-png": "^7.0.1",
+    "thorish": "^1.1.70"
+  },
+  "peerDependencies": {
+    "puppeteer": "^24.17.0"
   },
   "type": "module",
   "scripts": {
-    "test": "NODE_OPTIONS='--experimental-transform-types --disable-warning=ExperimentalWarning' node --test **/*.test.ts"
+    "build": "esbuild --bundle --format=esm --platform=node --external:puppeteer --outfile=dist/trmnlocal.js src/index.ts",
+    "prepublishOnly": "node --run build"
+  },
+  "bin": {
+    "trmnlocal": "./dist/bin.js"
   },
   "private": true,
-  "license": "Apache-2.0",
-  "dependencies": {
-    "fast-png": "^7.0.1",
-    "puppeteer": "^24.17.0",
-    "thorish": "^1.1.70"
-  }
+  "license": "Apache-2.0"
 }
